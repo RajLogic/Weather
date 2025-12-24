@@ -91,7 +91,7 @@ async function fetchWeather(lat, lon) {
 
 async function fetchWeatherByCity(city) {
     try {
-        const response = await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
+        const response = await fetch(`/api/weather/city?city=${encodeURIComponent(city)}`);
 
         if (!response.ok) {
             const errorData = await response.json();
