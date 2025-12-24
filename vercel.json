@@ -1,0 +1,6 @@
+{
+    "functions": {},
+    "env": {
+        "NODE_ENV": "production"
+    }
+}
