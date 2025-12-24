@@ -4,14 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
     <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
         <div class="header">
-            <h1>Weather App</h1>
+            <h1>🌤️ Weather App</h1>
+        </div>
+        <div class="search-section">
+            <input type="text" id="cityInput" placeholder="Search for a city..." />
+            <button id="searchBtn">Search</button>
+            <button id="locationBtn">📍 Use My Location</button>
         </div>
         <div id="app"></div>
     </div>
