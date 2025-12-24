@@ -1,3 +1,7 @@
+let debounceTimer;
+const dropdown = document.getElementById('dropdown');
+const cityInput = document.getElementById('cityInput');
+
 function renderLoading() {
     return '<div class="loading">Loading weather data...</div>';
 }
@@ -105,6 +109,66 @@ async function fetchWeatherByCity(city) {
     }
 }
 
+async function searchLocations(query) {
+    if (query.length < 2) {
+        hideDropdown();
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/geocoding?q=${encodeURIComponent(query)}`);
+
+        if (!response.ok) {
+            hideDropdown();
+            return;
+        }
+
+        const locations = await response.json();
+        displayDropdown(locations);
+    } catch (error) {
+        console.error('Error fetching locations:', error);
+        hideDropdown();
+    }
+}
+
+function displayDropdown(locations) {
+    if (!locations || locations.length === 0) {
+        hideDropdown();
+        return;
+    }
+
+    dropdown.innerHTML = locations.map(loc => {
+        const state = loc.state ? `, ${loc.state}` : '';
+        return `
+            <div class="dropdown-item" data-lat="${loc.lat}" data-lon="${loc.lon}" data-name="${loc.name}, ${loc.country}">
+                <span class="location-name">${loc.name}${state}, ${loc.country}</span>
+            </div>
+        `;
+    }).join('');
+
+    dropdown.style.display = 'block';
+
+    // Add click handlers to dropdown items
+    const items = dropdown.querySelectorAll('.dropdown-item');
+    items.forEach(item => {
+        item.addEventListener('click', () => {
+            const lat = item.dataset.lat;
+            const lon = item.dataset.lon;
+            const name = item.dataset.name;
+
+            cityInput.value = name;
+            hideDropdown();
+            render(renderLoading());
+            fetchWeather(lat, lon);
+        });
+    });
+}
+
+function hideDropdown() {
+    dropdown.style.display = 'none';
+    dropdown.innerHTML = '';
+}
+
 function getWeatherByLocation() {
     render(renderLoading());
 
@@ -137,17 +201,28 @@ getWeatherByLocation();
 
 // Event listeners
 document.getElementById('searchBtn').addEventListener('click', () => {
-    const city = document.getElementById('cityInput').value.trim();
+    const city = cityInput.value.trim();
     if (city) {
+        hideDropdown();
         render(renderLoading());
         fetchWeatherByCity(city);
     }
 });
 
-document.getElementById('cityInput').addEventListener('keypress', (e) => {
+cityInput.addEventListener('input', (e) => {
+    const query = e.target.value.trim();
+
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        searchLocations(query);
+    }, 300);
+});
+
+cityInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-        const city = document.getElementById('cityInput').value.trim();
+        const city = cityInput.value.trim();
         if (city) {
+            hideDropdown();
             render(renderLoading());
             fetchWeatherByCity(city);
         }
@@ -156,4 +231,11 @@ document.getElementById('cityInput').addEventListener('keypress', (e) => {
 
 document.getElementById('locationBtn').addEventListener('click', () => {
     getWeatherByLocation();
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper')) {
+        hideDropdown();
+    }
 });
