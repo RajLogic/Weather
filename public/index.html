@@ -14,7 +14,10 @@
             <h1>🌤️ Weather App</h1>
         </div>
         <div class="search-section">
-            <input type="text" id="cityInput" placeholder="Search for a city..." />
+            <div class="search-wrapper">
+                <input type="text" id="cityInput" placeholder="Search for a city..." autocomplete="off" />
+                <div id="dropdown" class="dropdown"></div>
+            </div>
             <button id="searchBtn">Search</button>
             <button id="locationBtn">📍 Use My Location</button>
         </div>

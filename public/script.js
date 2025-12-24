@@ -116,14 +116,19 @@ async function searchLocations(query) {
     }
 
     try {
+        console.log('Searching for:', query);
         const response = await fetch(`/api/geocoding?q=${encodeURIComponent(query)}`);
 
+        console.log('Response status:', response.status);
+
         if (!response.ok) {
+            console.error('Response not OK');
             hideDropdown();
             return;
         }
 
         const locations = await response.json();
+        console.log('Locations found:', locations);
         displayDropdown(locations);
     } catch (error) {
         console.error('Error fetching locations:', error);
@@ -132,7 +137,10 @@ async function searchLocations(query) {
 }
 
 function displayDropdown(locations) {
+    console.log('displayDropdown called with:', locations);
+
     if (!locations || locations.length === 0) {
+        console.log('No locations to display');
         hideDropdown();
         return;
     }
@@ -147,6 +155,7 @@ function displayDropdown(locations) {
     }).join('');
 
     dropdown.style.display = 'block';
+    console.log('Dropdown should be visible now');
 
     // Add click handlers to dropdown items
     const items = dropdown.querySelectorAll('.dropdown-item');

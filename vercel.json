@@ -4,6 +4,10 @@
         {
             "source": "/api/weather",
             "destination": "/api/weather"
+        },
+        {
+            "source": "/api/geocoding",
+            "destination": "/api/geocoding"
         }
     ],
     "headers": [
